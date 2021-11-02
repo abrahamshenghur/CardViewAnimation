@@ -27,6 +27,13 @@ class CustomCell: UICollectionViewCell {
         return iv
     }()
     
+    let safariVCContainerView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .blue
+//        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         configure()
@@ -37,15 +44,23 @@ class CustomCell: UICollectionViewCell {
     }
     
     func configure() {
-        contentView.addSubview(websitePreviewImage)
-        
+        contentView.addSubview(safariVCContainerView)
+        safariVCContainerView.addSubview(websitePreviewImage)
+
         let padding: CGFloat = 9
+        let morePadding: CGFloat = 9
+
         
         NSLayoutConstraint.activate([
-            websitePreviewImage.topAnchor.constraint(equalTo: contentView.topAnchor, constant: padding),
-            websitePreviewImage.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: padding),
-            websitePreviewImage.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -padding),
-            websitePreviewImage.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -padding),
+            websitePreviewImage.topAnchor.constraint(equalTo: contentView.topAnchor, constant: morePadding),
+            websitePreviewImage.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: morePadding),
+            websitePreviewImage.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -morePadding),
+            websitePreviewImage.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -morePadding),
+            
+            safariVCContainerView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: padding),
+            safariVCContainerView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: padding),
+            safariVCContainerView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -padding),
+            safariVCContainerView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -padding),
         ])
     }
 }

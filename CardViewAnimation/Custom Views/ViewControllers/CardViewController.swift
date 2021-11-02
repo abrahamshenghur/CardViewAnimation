@@ -60,6 +60,48 @@ class CardViewController: UIViewController, SFSafariViewControllerDelegate, Scre
     }()
     
     
+    lazy var scrollview: UIScrollView = {
+        let scrollView = UIScrollView()
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
+        return scrollView
+    }()
+    
+    lazy var stackView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.axis = .horizontal
+        stackView.backgroundColor = .blue
+        stackView.distribution = .fillEqually
+        stackView.spacing = 20
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        return stackView
+    }()
+    
+    lazy var contentView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .green
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+    
+    var titleLabel: UILabel {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.backgroundColor = .red
+        label.text = "UIStackView inside UIScrollView"
+        label.font = UIFont.systemFont(ofSize: 24, weight: .medium)
+        label.textColor = .white
+        label.textAlignment = .center
+        return label
+    }
+    
+    
+//    var imageView: UIImageView {
+//        let imageView = UIImageView()
+//        imageView.heightAnchor.constraint(equalToConstant: 100).isActive = true
+//        imageView.widthAnchor.constraint(equalToConstant: 100).isActive = true
+//        return imageView
+//    }
+    
     init(website: String) {
         super.init(nibName: nil, bundle: nil)
     }
@@ -73,6 +115,23 @@ class CardViewController: UIViewController, SFSafariViewControllerDelegate, Scre
     override func viewDidLoad() {
         super.viewDidLoad()
         
+//        tryCollectionView()
+        tryScrollView()
+    }
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(true)
+//        runStackVC()
+    }
+    
+    
+    func runStackVC() {
+        let tabStackVC = StackAsTabsViewController()
+        self.present(tabStackVC, animated: true)
+    }
+    
+    
+    func tryCollectionView() {
         view.addSubview(collectionView)
         collectionView.backgroundColor = .lightGray
         collectionView.delegate = self
@@ -84,6 +143,89 @@ class CardViewController: UIViewController, SFSafariViewControllerDelegate, Scre
             collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
         ])
+    }
+    
+    
+    func tryScrollView() {
+        setupViews()
+        setupLayout()
+    }
+    
+    func setupViews() {
+        scrollview.backgroundColor = .lightGray
+        view.addSubview(scrollview)
+        scrollview.addSubview(contentView)
+        contentView.addSubview(stackView)
+        
+        for image in data {
+//            let imageView = UIImageView()
+//            imageView.image = image.websitePreview
+//            imageView.contentMode = .scaleAspectFit
+//            imageView.widthAnchor.constraint(equalToConstant: view.bounds.width * 0.85).isActive = true
+//            stackView.addArrangedSubview(imageView)
+            
+            var safariAutotrader = SFSafariViewController(url: URL(string: "https://www.autotrader.com/cars-for-sale/all-cars?zip=92570&makeCodeList=ACURA&modelCodeList=ACUCL")!)
+            
+            addChild(safariAutotrader)
+            self.view.addSubview(safariAutotrader.view)
+            safariAutotrader.didMove(toParent: self)
+            safariAutotrader.view.widthAnchor.constraint(equalToConstant: view.bounds.width * 0.85).isActive = true
+
+            stackView.addArrangedSubview(safariAutotrader.view)
+
+        }
+    }
+    
+    func setupLayout() {
+        NSLayoutConstraint.activate([
+            scrollview.topAnchor.constraint(equalTo: view.topAnchor),
+            scrollview.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            scrollview.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            scrollview.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            
+            contentView.topAnchor.constraint(equalTo: scrollview.topAnchor),
+            contentView.leadingAnchor.constraint(equalTo: scrollview.leadingAnchor),
+            contentView.trailingAnchor.constraint(equalTo: scrollview.trailingAnchor),
+            contentView.bottomAnchor.constraint(equalTo: scrollview.bottomAnchor),
+            
+            contentView.heightAnchor.constraint(equalTo: scrollview.heightAnchor),
+            
+            stackView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 10),
+            stackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 10),
+            stackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -10),
+            stackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -10),
+        ])
+    }
+    
+    // https://www.hackingwithswift.com/forums/swift/problem-with-stackview-and-add-label/122
+    func createStack() -> UIStackView {
+        var myStack = UIStackView()
+        let frameStack = CGRect(x: 100, y: 200, width: 250, height: 200)
+        myStack = UIStackView(frame: frameStack)
+        myStack.axis = .vertical
+        myStack.distribution = .fillEqually
+        let addView = createView(positionX: myStack.bounds.minX, positionY: myStack.bounds.minY, paramWidth: myStack.bounds.width, paramHeight: myStack.bounds.height)
+        myStack.addSubview(addView)
+        return myStack
+    }
+    func createView(positionX: CGFloat, positionY: CGFloat, paramWidth: CGFloat, paramHeight: CGFloat) -> UIView {
+        var myView = UIView()
+        let frameView = CGRect(x: positionX, y: positionY, width: paramWidth, height: paramHeight)
+        myView = UIView(frame: frameView)
+        myView.layer.borderWidth = 1
+        return myView
+    }
+    func createLabel(positionX: CGFloat, positionY: CGFloat, backgroundcolor: UIColor, text: String) -> UILabel {
+        var myLabel = UILabel()
+        let frameLabel = CGRect(x: positionY, y: positionY, width: 200, height: 30)
+        myLabel = UILabel(frame: frameLabel)
+        myLabel.layer.borderWidth = 1
+        myLabel.layer.cornerRadius = 7
+        myLabel.backgroundColor = backgroundcolor
+        myLabel.text = text
+        myLabel.textAlignment = .center
+        myLabel.clipsToBounds = true
+        return myLabel
     }
     
     var currentIndex = 0
@@ -216,5 +358,173 @@ extension CardViewController: UIScrollViewDelegate {
 extension Numeric where Self: Comparable {
     func clamped(byMin min: Self, max: Self) -> Self {
         return Swift.min(Swift.max(min, self), max)
+    }
+}
+
+
+class MyTabView: UIView {
+    
+    let imgView = UIImageView()
+    
+    init(with image: UIImage) {
+        super.init(frame: .zero)
+        imgView.image = image
+        configure()
+    }
+    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        configure()
+    }
+    
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+        configure()
+    }
+    
+    func configure() {
+        imgView.translatesAutoresizingMaskIntoConstraints = false
+        imgView.backgroundColor = .lightGray
+        addSubview(imgView)
+        
+        NSLayoutConstraint.activate([
+            imgView.centerXAnchor.constraint(equalTo: centerXAnchor),
+            imgView.centerYAnchor.constraint(equalTo: centerYAnchor),
+            imgView.widthAnchor.constraint(equalToConstant: 50.0),
+            imgView.heightAnchor.constraint(equalTo: imgView.widthAnchor)
+        ])
+        
+        clipsToBounds = true
+        layer.cornerRadius = 12
+        layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMaxYCorner]
+        layer.borderWidth = 1
+        layer.borderColor = UIColor.darkGray.cgColor
+    }
+}
+
+
+class StackAsTabsViewController: UIViewController {
+    
+    let stackView: UIStackView = {
+        let v = UIStackView()
+        v.axis = .horizontal
+        v.distribution = .fill
+        v.translatesAutoresizingMaskIntoConstraints = false
+        return v
+    }()
+    
+    let scrollView: UIScrollView = {
+        let v = UIScrollView()
+        v.translatesAutoresizingMaskIntoConstraints = false
+        return v
+    }()
+    
+    let statusLabel: UILabel = {
+        let v = UILabel()
+        v.numberOfLines = 0
+        v.translatesAutoresizingMaskIntoConstraints = false
+        return v
+    }()
+    
+    var images = [UIImage]()
+    
+    var isAdding = true
+    
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        view.addSubview(statusLabel)
+        scrollView.addSubview(stackView)
+        view.addSubview(scrollView)
+        
+        let safeArea = view.safeAreaLayoutGuide
+        
+        let scrollContentLayout = scrollView.contentLayoutGuide
+        let scrollFrameLayout = scrollView.frameLayoutGuide
+        
+        NSLayoutConstraint.activate([
+            scrollView.topAnchor.constraint(equalTo: safeArea.topAnchor),
+            scrollView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor),
+            scrollView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor),
+            scrollView.heightAnchor.constraint(equalToConstant: 58.0),
+            
+            stackView.topAnchor.constraint(equalTo: scrollContentLayout.topAnchor),
+            stackView.leadingAnchor.constraint(equalTo: scrollContentLayout.leadingAnchor),
+            stackView.trailingAnchor.constraint(equalTo: scrollContentLayout.trailingAnchor),
+            stackView.bottomAnchor.constraint(equalTo: scrollContentLayout.bottomAnchor),
+            stackView.heightAnchor.constraint(equalTo: scrollFrameLayout.heightAnchor),
+            
+            statusLabel.topAnchor.constraint(equalTo: scrollView.bottomAnchor, constant: 40.0),
+            statusLabel.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 40.0),
+            statusLabel.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -40.0)
+        ])
+        
+        for i in 1...9 {
+            guard let img = UIImage(systemName: "\(i).circle.fill") else {
+                fatalError("Could not create images!!!")
+            }
+            images.append(img)
+        }
+        
+        updateTabs()
+        
+        let tap = UITapGestureRecognizer(target: self, action: #selector(gotTap(_:)))
+        view.addGestureRecognizer(tap)
+
+    }
+    
+    @objc func gotTap(_ g: UITapGestureRecognizer) {
+        updateTabs()
+    }
+    
+    func updateTabs() {
+        if isAdding {
+            let img = images[stackView.arrangedSubviews.count]
+            
+            let tab = MyTabView(with: img)
+            
+            stackView.addArrangedSubview(tab)
+            let scrollFrameLayout = scrollView.frameLayoutGuide
+            
+            NSLayoutConstraint.activate([
+                tab.widthAnchor.constraint(equalTo: scrollFrameLayout.widthAnchor, multiplier: 1.0 / 3.0),
+                tab.heightAnchor.constraint(equalTo: scrollFrameLayout.heightAnchor)
+            ])
+        } else {
+            stackView.arrangedSubviews.last?.removeFromSuperview()
+        }
+        
+        if stackView.arrangedSubviews.count == 1 { // remains false while decreasing until it hits 1
+            isAdding = true
+        } else if stackView.arrangedSubviews.count == images.count {
+            isAdding = false
+        }
+        
+        updateStatusLabels()
+    }
+    
+    func updateStatusLabels() {
+        DispatchQueue.main.async {
+            let numTabs = self.stackView.arrangedSubviews.count
+            var str = ""
+            
+            if self.isAdding {
+                str += "Tap anywhere to ADD a tab"
+            } else {
+                str += "Tap anywhere to REMOVE a tab"
+            }
+            
+            str += "\n"
+            str += "Number of tabs: \(numTabs)"
+            str += "\n"
+            
+            if numTabs > 3 {
+                str += "Tabs WILL scroll"
+            } else {
+                str += "Tabs will NOT scroll"
+            }
+            
+            self.statusLabel.text = str
+        }
     }
 }

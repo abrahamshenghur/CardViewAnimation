@@ -22,6 +22,8 @@ class ViewController: UIViewController  {
     
     weak var delegate: ScreenShotDelegate?
 
+    let logoImageView = UIImageView()
+
     let parentContainerView = UIView(frame: .zero)
     let childViewForHideCardButton = UIView(frame: .zero)
     let childViewForCollectionView = UIView(frame: .zero)
@@ -43,11 +45,13 @@ class ViewController: UIViewController  {
     var runningAnimations = [UIViewPropertyAnimator]()
     
     let searchButton = Button(title: "Search for Vehicles")
-    let hideCardButton = Button(title: "Hide Card")
+    let hideCardButton = Button(title: "")
 
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        configureLogo()
+        
         configureSearchButton()
         
         configureParentContainerView()
@@ -60,6 +64,12 @@ class ViewController: UIViewController  {
         layoutUI()
     }
 
+    func configureLogo() {
+        view.addSubview(logoImageView)
+        logoImageView.image = UIImage(named: "cpc-logo")
+        logoImageView.backgroundColor = #colorLiteral(red: 0.1091164276, green: 0.3069898784, blue: 0.2836051285, alpha: 1)
+        
+    }
     
     func configureSearchButton() {
         view.addSubview(searchButton)
@@ -71,28 +81,34 @@ class ViewController: UIViewController  {
     
     
     func configureParentContainerView() {
-        parentContainerView.backgroundColor = .green
+        parentContainerView.backgroundColor = .white
         parentContainerView.layer.cornerRadius = 12
         view.addSubview(parentContainerView)
     }
     
     
     func configureChildViewForHideCardButton() {
-        childViewForHideCardButton.backgroundColor = .yellow
+        childViewForHideCardButton.backgroundColor = .white
         parentContainerView.addSubview(childViewForHideCardButton)
     }
     
     
     func configureChildViewForCollectionView() {
-        childViewForCollectionView.backgroundColor = .brown
+//        childViewForCollectionView.backgroundColor = .brown
         parentContainerView.addSubview(childViewForCollectionView)
     }
 
     
     func configureHideCardButton() {
-        hideCardButton.backgroundColor = .lightGray
-        childViewForHideCardButton.addSubview(hideCardButton)
+//        let largeFont = UIFont.systemFont(ofSize: 75)
+//        let configuration = UIImage.SymbolConfiguration(font: largeFont)
+        let symbolConfiguration = UIImage.SymbolConfiguration(pointSize: 70, weight: .regular, scale: .medium)
+        
+        let chevronCompactDown = UIImage(systemName: "chevron.compact.down", withConfiguration: symbolConfiguration)?.withTintColor(.lightGray, renderingMode: .alwaysOriginal)
+//        let iconImage = UIImage(systemName: "chevron.right",withConfiguration: UIImage.SymbolConfiguration(pointSize: 16, weight: .regular, scale: .medium))?.withTintColor(.systemGreen)
+        hideCardButton.setImage(chevronCompactDown, for: .normal)
         hideCardButton.addTarget(self, action: #selector(hideCard), for: .touchUpInside)
+        childViewForHideCardButton.addSubview(hideCardButton)
     }
     
     
@@ -146,6 +162,7 @@ class ViewController: UIViewController  {
     
 
     func layoutUI() {
+        logoImageView.translatesAutoresizingMaskIntoConstraints                 = false
         parentContainerView.translatesAutoresizingMaskIntoConstraints           = false
         childViewForHideCardButton.translatesAutoresizingMaskIntoConstraints    = false
         childViewForCollectionView.translatesAutoresizingMaskIntoConstraints    = false
@@ -155,10 +172,15 @@ class ViewController: UIViewController  {
         let padding = CGFloat(20)
 
         NSLayoutConstraint.activate([
+            logoImageView.topAnchor.constraint(equalTo: view.topAnchor, constant: 80),
+            logoImageView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            logoImageView.widthAnchor.constraint(equalToConstant: 220),
+            logoImageView.heightAnchor.constraint(equalToConstant: 220),
+            
             searchButton.heightAnchor.constraint(equalToConstant: 60),
             searchButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: padding),
             searchButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -padding),
-            searchButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -65),
+            searchButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -85),
             
             parentContainerView.topAnchor.constraint(equalTo: view.bottomAnchor),
             parentContainerView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 0),
