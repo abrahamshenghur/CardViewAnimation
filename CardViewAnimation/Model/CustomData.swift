@@ -11,3 +11,12 @@ import UIKit
 struct CustomData {
     var websitePreview: UIImage
 }
+
+
+enum Website: String {
+    case autotrader
+    case carsDotCom
+    case carGurus
+    case craigslist
+    case truecar
+}

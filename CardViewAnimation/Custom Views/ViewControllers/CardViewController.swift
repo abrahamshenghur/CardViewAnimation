@@ -35,7 +35,7 @@ enum SpacingStrategy {
 }
 
 
-class CardViewController: UIViewController, SFSafariViewControllerDelegate, ScreenShotDelegate {
+class CardViewController: UIViewController, SFSafariViewControllerDelegate {
     func getScreenShot() {
         print("✳️")
     }
